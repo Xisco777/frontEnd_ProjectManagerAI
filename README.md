@@ -1,9 +1,4 @@
-English | [简体中文](./README.zh-CN.md)
 
-[![Anurag's GitHub stats](https://github-readme-stats.vercel.app/api?username=gywgithub)](https://github.com/anuraghazra/github-readme-stats)
-
-
-## Vue D3 V5 Examples
 
 `Vue`   `D3`   `V5`   `Examples`
 
@@ -15,19 +10,6 @@ vue: `v2.6.6`
 
 d3: `v5.12.0`
 
-### Online Preview
-
-https://gywgithub.github.io/vue-d3-examples/
-
-### Features
-
-- Basic
-- Tree
-- BarChart
-- Zoom
-- Force
-- Histogram
-- Lines
 
 ### Project setup
 ```
@@ -53,7 +35,3 @@ npm run build
 ```
 npm run lint
 ```
-
-## License
-
-[MIT License](https://github.com/gywgithub/vue-d3-examples/blob/master/LICENSE)
