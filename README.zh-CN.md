@@ -1,7 +1,6 @@
-English | [简体中文](./README.zh-CN.md)
+简体中文 | [English](./README.md)
 
 [![Anurag's GitHub stats](https://github-readme-stats.vercel.app/api?username=gywgithub)](https://github.com/anuraghazra/github-readme-stats)
-
 
 ## Vue D3 V5 Examples
 
@@ -15,19 +14,19 @@ vue: `v2.6.6`
 
 d3: `v5.12.0`
 
-### Online Preview
+### 在线预览
 
 https://gywgithub.github.io/vue-d3-examples/
 
-### Features
+### 特性
 
-- Basic
-- Tree
-- BarChart
-- Zoom
-- Force
-- Histogram
-- Lines
+- 基础
+- 树
+- 条形图
+- 缩放
+- 力导向图
+- 直方图
+- 折线图
 
 ### Project setup
 ```
