@@ -55,13 +55,10 @@
             <v-card-text>
               <v-container>
                 <v-row>
-                  <v-file-input
-                    v-model="texto"
+                  <v-text-field
+                    v-model="archivoPath"
                     label="Ruta documento"
-                    placeholder="Ruta documento"
-                    prepend-icon="mdi-paperclip"
-                  >
-                </v-file-input>
+                  ></v-text-field>
                 </v-row>
               </v-container>
             </v-card-text>
@@ -87,7 +84,7 @@
         </v-dialog>
         <v-dialog v-model="dialogDelete" max-width="500px">
           <v-card>
-            <v-card-title class="text-h5">Are you sure you want to delete this item?</v-card-title>
+            <v-card-title class="text-h5">Estas seguro que quiere eliminarlo?</v-card-title>
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn color="blue darken-1" text @click="closeDelete">Cancel</v-btn>
@@ -99,13 +96,6 @@
       </v-toolbar>
     </template>
     <template v-slot:item.actions="{ item }">
-      <v-icon
-        small
-        class="mr-2"
-        @click="editItem(item)"
-      >
-        mdi-pencil
-      </v-icon>
       <v-icon
         small
         @click="deleteItem(item)"
@@ -146,7 +136,7 @@ export default {
       dialogCargar: false,
       dialoguardar: false,
       dialogAñadir: false,
-      BOMs: ['ST-TT2-RS2', 'ST-TT2-RS3', 'ST-TT3-RS2', 'ST-TT4-RS2'],
+      BOMs: ['', ''],
       path: '',
       dialogResumen: false,
       headers: [
@@ -162,9 +152,7 @@ export default {
       editedIndex: -1,
       editedItem: {
         name: '',
-        tipo: '',
-        fechamodificacion: '',
-        path: ''
+        ruta: ''
       },
       defaultItem: {
         name: '',
@@ -174,16 +162,8 @@ export default {
       },
       archivos: [
         {
-          name: 'RequisitosCliente.docx',
-          ruta: 'C:\\Users\\Xisco\\Documents\\ProjectManagerIA\\Gestion\\RequisitosCliente.docx'
-        },
-        {
-          name: 'RequisitosProyecto.docx',
-          ruta: 'C:\\Users\\Xisco\\Documents\\ProjectManagerIA\\Gestion\\RequisitosProyecto.docx'
-        },
-        {
-          name: 'InterfacesSistema.docx',
-          ruta: 'C:\\Users\\Xisco\\Documents\\ProjectManagerIA\\Gestion\\InterfacesSistema.docx'
+          name: '',
+          ruta: ''
         }
       ]
     }
@@ -196,7 +176,7 @@ export default {
 
   watch: {
     dialogDelete (val) {
-      val || this.closeResumen()
+      val || this.closeDelete()
     }
   },
 
@@ -204,12 +184,26 @@ export default {
     this.initialize()
   },
   methods: {
+    deleteItem (item) {
+      this.editedIndex = this.archivos.indexOf(item)
+      this.editedItem = Object.assign({}, item)
+      this.dialogDelete = true
+    },
+
+    deleteItemConfirm () {
+      this.archivos.splice(this.editedIndex, 1)
+      this.closeDelete()
+    },
     enviar() {
+      const archivosCarga = this.archivos.map(item => ({
+        name: item.name,
+        ruta: item.ruta
+      }))
       axios
-        .post('http://localhost:8000/generarHDD', {
-          descripcion: this.brevedescripcion,
-          BOM: this.BOM,
-          docAdicional: this.archivos
+        .post('http://localhost:8000/generarDocumentoHDD', {
+          nombre_bom: this.BOM,
+          descripcion_proyecto: this.brevedescripcion,
+          documentos: archivosCarga
         })
         .then(response => {
           console.log('Respuesta del servidor:', response.data)
@@ -220,26 +214,31 @@ export default {
           // Puedes manejar el error aquí, por ejemplo, mostrar un mensaje de error
         })
     },
-    loadBOMs() {
-      axios
-        .get('http://localhost:8000/loadBOMs')
-        .then(response => {
-          this.BOMs = response.data
-        })
-        .catch(error => {
-          console.error('Error al cargar los BOMs:', error)
-        })
-    },
     anadir () {
-      if (this.editedIndex > -1) {
-        Object.assign(this.archivos[this.editedIndex], this.editedItem)
-      } else {
-        this.archivos.push(this.editedItem)
-      }
+      // 1. Dividir la ruta del archivo
+      const lastSlashIndex = this.archivoPath.lastIndexOf('\\')
+      const nombreArchivo = this.archivoPath.substring(lastSlashIndex + 1)
+
+      // 2. Actualizar editedItem
+      this.editedItem.name = nombreArchivo
+      this.editedItem.ruta = this.archivoPath
+
+      // 3. Añadir a la matriz archivos
+      this.archivos.push(this.editedItem)
       this.closeAñadir()
     },
     initialize () {
-      this.loadBOMs()
+      axios
+        .get('http://localhost:8000/lecturaNombreBOMs')
+        .then(response => {
+          this.BOMs = response.data
+          console.log('BOM leida:', response.data)
+          // ... (puedes agregar lógica adicional aquí, como mostrar un mensaje de éxito) ...
+        })
+        .catch(error => {
+          console.error('Error en lectura la BOM:', error)
+          // ... (manejo de errores, como mostrar un mensaje al usuario) ...
+        })
       this.archivos = [
         {
           name: 'RequisitosCliente.docx',
@@ -263,8 +262,8 @@ export default {
       this.dialogResumen = true
     },
 
-    closeResumen () {
-      this.dialogResumen = false
+    closeDelete () {
+      this.dialogDelete = false
     },
 
     closeAñadir () {

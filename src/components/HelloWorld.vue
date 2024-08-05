@@ -1,20 +1,17 @@
 <template>
   <div>
-    <v-file-input
-    v-model="files"
-    label="Resumen de la reunion"
-    placeholder="Archivo"
-    prepend-icon="mdi-paperclip"
-    multiple
-  >
-  </v-file-input>
+        <v-textarea
+          v-model="file"
+          autocomplete="on"
+          label="Resumen de la reunion"
+        ></v-textarea>
       <v-card-actions>
           <v-spacer></v-spacer>
           <v-col class="text-center" cols="12">
           <v-btn
             color="primary"
             flat
-            @click=enviar()
+            @click=enviarScriptReunion()
           >
             Enviar
           </v-btn>
@@ -25,8 +22,10 @@
           <v-spacer></v-spacer>
           <v-container fluid>
           <v-textarea
-            autocomplete="email"
+            v-model="resumenReunion"
+            autocomplete="off"
             label="Resumen"
+            readonly
           ></v-textarea>
         </v-container>
       </v-card-actions>
@@ -34,20 +33,36 @@
   </div>
 </template>
 <script>
-import * as d3 from 'd3'
+import axios from 'axios'
 export default {
-  methods: {
-    enviar() {
-      this.message = 'You clicked the button!'
+  data () {
+    return {
+      file: null,
+      resumenReunion: ''
     }
   },
-  mounted () {
-    let p = d3.select('body')
-      .selectAll('p')
-
-    p.text('Hello World')
+  methods: {
+    enviarScriptReunion() {
+      if (this.file) {
+        axios
+          .get(`http://localhost:8000/resumenReunion`, {
+            params: {
+              path: this.file
+            }
+          })
+          .then(response => {
+            this.resumenReunion = response.data.message
+          })
+          .catch(error => {
+            console.error('Error al obtener el resumen:', error)
+          })
+      } else {
+        console.error('Por favor, selecciona un archivo.')
+      }
+    }
   }
 }
+
 </script>
 <style>
 </style>

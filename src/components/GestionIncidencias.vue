@@ -24,19 +24,79 @@
       align="center"
       justify="space-around"
     >
-        <v-btn color="primary" @click="conftipoincidencia=true">
+        <v-btn color="primary" @click="dialogtipoIncidencia=true">
           COMFIGURAR TIPO INCIDENCIA
         </v-btn>
-        <v-btn color="primary" @click="irGestionPersonal">
+        <v-btn color="primary" @click="dialogpersonal=true">
           PERSONAL
         </v-btn>
-        <v-btn color="primary" @click="irGestionEmpresa">
+        <v-btn color="primary" @click="dialogdescripcionEmpresa=true">
           EMPRESA
         </v-btn>
-        <v-btn color="primary" @click="irGestionProductos">
+        <v-btn color="primary" @click="dialogproductos=true">
           PRODUCTOS
         </v-btn>
     </v-row>
+    <v-dialog v-model="dialogtipoIncidencia" max-width="1200px">
+      <v-card>
+        <v-card-title>
+          <span class="text-h5">Describe los tipos de Incidencias</span>
+        </v-card-title>
+          <v-textarea
+            v-model="tipoIncidencia"
+          ></v-textarea>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" text @click="guadartipoincidencia">Guardar</v-btn>
+          <v-btn color="blue darken-1" text @click="dialogtipoIncidencia = false">Salir</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="dialogpersonal" max-width="1200px">
+      <v-card>
+        <v-card-title>
+          <span class="text-h5">Describe al personal</span>
+        </v-card-title>
+          <v-textarea
+            v-model="personal"
+          ></v-textarea>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" text @click="guadarpersonal">Guardar</v-btn>
+          <v-btn color="blue darken-1" text @click="dialogpersonal = false">Salir</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="dialogdescripcionEmpresa" max-width="1200px">
+      <v-card>
+        <v-card-title>
+          <span class="text-h5">Describe la empresa</span>
+        </v-card-title>
+          <v-textarea
+            v-model="descripcionEmpresa"
+          ></v-textarea>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" text @click="guadarempresa">Guardar</v-btn>
+          <v-btn color="blue darken-1" text @click="dialogdescripcionEmpresa = false">Salir</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="dialogproductos" max-width="1200px">
+      <v-card>
+        <v-card-title>
+          <span class="text-h5">Describe los productos</span>
+        </v-card-title>
+          <v-textarea
+            v-model="productos"
+          ></v-textarea>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" text @click="guadarproductos">Guardar</v-btn>
+          <v-btn color="blue darken-1" text @click="dialogproductos = false">Salir</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <v-divider
       inset
       vertical
@@ -77,11 +137,20 @@
   </div>
 </template>
 <script>
+import axios from 'axios'
 export default {
   data () {
     return {
       search: '',
       email: '',
+      descripcionEmpresa: '',
+      productos: '',
+      personal: '',
+      tipoIncidencia: '',
+      dialogdescripcionEmpresa: false,
+      dialogproductos: false,
+      dialogpersonal: false,
+      dialogtipoIncidencia: false,
       dialog: false,
       dialogDelete: false,
       headers: [
@@ -171,27 +240,174 @@ export default {
   },
   methods: {
     guadaremail() {
-      this.message = 'You clicked the button!'
+      axios
+        .post('http://localhost:8000/set_EmailConsultas', {
+          email: this.email
+        }, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error)
+          // ... Manejo de errores, como mostrar un mensaje al usuario ...
+        })
+    },
+    guadarproductos() {
+      axios
+        .post('http://localhost:8000/set_configurarProductos', {
+          email: this.productos
+        }, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error)
+          // ... Manejo de errores, como mostrar un mensaje al usuario ...
+        })
+    },
+    guadarpersonal() {
+      axios
+        .post('http://localhost:8000/set_configuraPersonal', {
+          email: this.personal
+        }, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error)
+          // ... Manejo de errores, como mostrar un mensaje al usuario ...
+        })
+    },
+    guadartipoincidencia() {
+      axios
+        .post('http://localhost:8000/set_configurarTipoIncidencia', {
+          email: this.email
+        }, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error)
+          // ... Manejo de errores, como mostrar un mensaje al usuario ...
+        })
+    },
+    guadarempresa() {
+      axios
+        .post('http://localhost:8000/set_descripcionEmpresa', {
+          email: this.descripcionEmpresa
+        }, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error)
+          // ... Manejo de errores, como mostrar un mensaje al usuario ...
+        })
     },
     initialize () {
+      axios
+        .get('http://localhost:8000/lecturaIncidenciasAbiertas')
+        .then(response => {
+          this.archivos2 = response.data
+          console.log('workspaces leidas:', response.data)
+          // ... (puedes agregar lógica adicional aquí, como mostrar un mensaje de éxito) ...
+        })
+        .catch(error => {
+          console.error('Error en lectura de worskpace:', error)
+          // ... (manejo de errores, como mostrar un mensaje al usuario) ...
+        })
+      axios
+        .get('http://localhost:8000/lecturaIncidenciasHistorico')
+        .then(response => {
+          this.archivos = response.data
+          console.log('workspaces leidas:', response.data)
+          // ... (puedes agregar lógica adicional aquí, como mostrar un mensaje de éxito) ...
+        })
+        .catch(error => {
+          console.error('Error en lectura de worskpace:', error)
+          // ... (manejo de errores, como mostrar un mensaje al usuario) ...
+        })
+      axios
+        .get('http://localhost:8000/get_EmailConsultas')
+        .then(response => {
+          this.email = response.data
+          console.log('BOM leida:', response.data)
+          // ... (puedes agregar lógica adicional aquí, como mostrar un mensaje de éxito) ...
+        })
+        .catch(error => {
+          console.error('Error en lectura la BOM:', error)
+          // ... (manejo de errores, como mostrar un mensaje al usuario) ...
+        })
+      axios
+        .get('http://localhost:8000/get_configurarTipoIncidencia')
+        .then(response => {
+          this.email = response.data
+          console.log('BOM leida:', response.data)
+          // ... (puedes agregar lógica adicional aquí, como mostrar un mensaje de éxito) ...
+        })
+        .catch(error => {
+          console.error('Error en lectura la BOM:', error)
+          // ... (manejo de errores, como mostrar un mensaje al usuario) ...
+        })
+      axios
+        .get('http://localhost:8000/get_configuraPersonal')
+        .then(response => {
+          this.email = response.data
+          console.log('BOM leida:', response.data)
+          // ... (puedes agregar lógica adicional aquí, como mostrar un mensaje de éxito) ...
+        })
+        .catch(error => {
+          console.error('Error en lectura la BOM:', error)
+          // ... (manejo de errores, como mostrar un mensaje al usuario) ...
+        })
+      axios
+        .get('http://localhost:8000/get_descripcionEmpresa')
+        .then(response => {
+          this.email = response.data
+          console.log('BOM leida:', response.data)
+          // ... (puedes agregar lógica adicional aquí, como mostrar un mensaje de éxito) ...
+        })
+        .catch(error => {
+          console.error('Error en lectura la BOM:', error)
+          // ... (manejo de errores, como mostrar un mensaje al usuario) ...
+        })
+      axios
+        .get('http://localhost:8000/get_configurarProductos')
+        .then(response => {
+          this.email = response.data
+          console.log('BOM leida:', response.data)
+          // ... (puedes agregar lógica adicional aquí, como mostrar un mensaje de éxito) ...
+        })
+        .catch(error => {
+          console.error('Error en lectura la BOM:', error)
+          // ... (manejo de errores, como mostrar un mensaje al usuario) ...
+        })
       this.archivos = [
         {
           email: 'ejemplo_1@outlook.es',
           tipo: 'Consulta de Uso',
           producto: 'Actuador ST344-R12',
-          responsable: 'Luis Toledo (SW)'
+          responsable: 'Luis Toledo (SW)',
+          id: 6
         },
         {
           email: 'ejemplo_2@outlook.es',
           tipo: 'Problemas Técnicos',
           producto: 'Actuador ST452-R25',
-          responsable: 'Pepe Jimenez (HW)'
+          responsable: 'Pepe Jimenez (HW)',
+          id: 5
         },
         {
           email: 'ejemplo_3@outlook.es',
           tipo: 'Problemas Técnicos',
           producto: 'Tarjeta MT332',
-          responsable: 'Armando Jaleo Seguro (HW)'
+          responsable: 'Armando Jaleo Seguro (HW)',
+          id: 4
         }
       ]
       this.archivos2 = [
@@ -199,19 +415,22 @@ export default {
           email: 'ejemplo_3@outlook.es',
           tipo: 'Problemas Técnicos',
           producto: 'Actuador ST344-R12',
-          responsable: 'Armando Jaleo Seguro (HW)'
+          responsable: 'Armando Jaleo Seguro (HW)',
+          id: 1
         },
         {
           email: 'ejemplo_4@outlook.es',
           tipo: 'Problemas Técnicos',
           producto: 'Actuador ST333-R25',
-          responsable: 'Pepe Jimenez (HW)'
+          responsable: 'Pepe Jimenez (HW)',
+          id: 2
         },
         {
           email: 'ejemplo_5@outlook.es',
           tipo: 'Problemas Técnicos',
           producto: 'Tarjeta ST331',
-          responsable: 'Armando Jaleo Seguro (HW)'
+          responsable: 'Armando Jaleo Seguro (HW)',
+          id: 3
         }
       ]
     },

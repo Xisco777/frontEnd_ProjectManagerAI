@@ -45,7 +45,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" text @click="dialoguardar = false">SALIR</v-btn>
-          <v-btn color="blue darken-1" text @click="cargarBOM">GUARDAR</v-btn>
+          <v-btn color="blue darken-1" text @click="guardarBOM">GUARDAR</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -56,6 +56,7 @@
           <span class="text-h5">Cargar BOM</span>
         </v-card-title>
         <v-select
+          v-model="selectBOM"
           :items="BOMs"
           label="Standard"
           dense
@@ -79,23 +80,6 @@
           <v-toolbar-title>BOM</v-toolbar-title>
           <v-divider class="mx-4" inset vertical></v-divider>
           <v-spacer></v-spacer>
-          <v-dialog v-model="dialogResumen" max-width="500px">
-            <v-card>
-              <v-card-title class="text-h5">
-                Resumen Datasheet
-              </v-card-title>
-              <div class="text-overline mb-4">
-                hacerrr
-              </div>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" text @click="closeResumen">
-                  SALIR
-                </v-btn>
-                <v-spacer></v-spacer>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
         </v-toolbar>
       </template>
       <template v-slot:item.actions="{ item }">
@@ -115,7 +99,7 @@
       align="center"
       justify="space-around"
     >
-      <v-btn color="primary" @click="altenativo">
+      <v-btn color="primary" @click="funcionaltenativo">
         ANALISIS ALTERNATIVO
       </v-btn>
       <v-btn color="primary" @click="analizarObsolescencia">
@@ -125,6 +109,7 @@
         v-model="autoAnalisisObsolescencia"
         color="secondary"
         label="ANALISIS OBSOLECENCIA AUTOMATICO (CADA DIA)"
+        @click="cambioAnalisisObsolescencia"
       ></v-checkbox>
     </v-row>
     <v-divider
@@ -160,11 +145,12 @@ import axios from 'axios'
 export default {
   data () {
     return {
+      selectBOM: '',
       dialogCargar: false,
       dialoguardar: false,
+      autoAnalisisObsolescencia: false,
       BOMs: ['ST-TT2-RS2', 'ST-TT2-RS3', 'ST-TT3-RS2', 'ST-TT4-RS2'],
       path: '',
-      dialogResumen: false,
       headersalternativo: [
         {
           text: 'Componente Original',
@@ -267,6 +253,98 @@ export default {
     this.initialize()
   },
   methods: {
+    cambioAnalisisObsolescencia() {
+      axios
+        .post('http://localhost:8000/analisisObsolescenciaAutomatico', {
+          activar: this.autoAnalisisObsolescencia
+        }, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .catch(error => {
+          console.error('Error al obtener alternativas:', error)
+          // ... Manejo de errores, como mostrar un mensaje al usuario ...
+        })
+    },
+    funcionaltenativo() {
+      const componentes = this.archivos.map(item => ({
+        PartNumber: item.PartNumber,
+        Description: item.Description
+      }))
+      axios
+        .post('http://localhost:8000/analisisAlternativo', componentes)
+        .then(response => {
+          this.alternativo = response.data
+        })
+        .catch(error => {
+          console.error('Error al obtener alternativas:', error)
+          // ... Manejo de errores, como mostrar un mensaje al usuario ...
+        })
+    },
+    analizarObsolescencia() {
+      const componentes = this.archivos.map(item => ({
+        PartNumber: item.PartNumber,
+        Description: item.Description,
+        datasheet: item.pathdatasheet
+      }))
+      axios
+        .post('http://localhost:8000/analizarObsolescencia', componentes)
+        .then(response => {
+          this.alternativo = response.data
+        })
+        .catch(error => {
+          console.error('Error al obtener alternativas:', error)
+          // ... Manejo de errores, como mostrar un mensaje al usuario ...
+        })
+    },
+    guardarBOM() {
+      if (this.bomPath && this.projectName) {
+        axios
+          .get('http://localhost:8000/guardarBOM', {
+            params: {
+              path: this.bomPath,
+              nombreProyecto: this.projectName // Asegúrate de que el backend espera "nombreProyecto"
+            }
+          })
+          .then(response => {
+            console.log('BOM guardada:', response.data)
+            // ... (puedes agregar lógica adicional aquí, como mostrar un mensaje de éxito) ...
+            this.dialoguardar = false // Cierra el diálogo después de guardar
+            this.archivos = response.data
+          })
+          .catch(error => {
+            console.error('Error al guardar la BOM:', error)
+            // ... (manejo de errores, como mostrar un mensaje al usuario) ...
+          })
+      } else {
+        console.error('Por favor, completa ambos campos (ruta y nombre del proyecto).')
+        // ... (puedes mostrar un mensaje al usuario en la interfaz) ...
+      }
+    },
+    cargarBOM() {
+      if (this.selectBOM) {
+        axios
+          .get('http://localhost:8000/cargarBOM', {
+            params: {
+              nombre_bom: this.selectBOM
+            }
+          })
+          .then(response => {
+            console.log('BOM leida:', response.data)
+            // ... (puedes agregar lógica adicional aquí, como mostrar un mensaje de éxito) ...
+            this.dialogCargar = false // Cierra el diálogo después de guardar
+            this.archivos = response.data
+          })
+          .catch(error => {
+            console.error('Error en lectura la BOM:', error)
+            // ... (manejo de errores, como mostrar un mensaje al usuario) ...
+          })
+      } else {
+        console.error('Por favor, completa campo en el selector.')
+        // ... (puedes mostrar un mensaje al usuario en la interfaz) ...
+      }
+    },
     enviar() {
       try {
         axios
@@ -276,6 +354,28 @@ export default {
       }
     },
     initialize () {
+      axios
+        .get('http://localhost:8000/lecturaNombreBOMs')
+        .then(response => {
+          this.BOMs = response.data
+          console.log('BOM leida:', response.data)
+          // ... (puedes agregar lógica adicional aquí, como mostrar un mensaje de éxito) ...
+        })
+        .catch(error => {
+          console.error('Error en lectura la BOM:', error)
+          // ... (manejo de errores, como mostrar un mensaje al usuario) ...
+        })
+      axios
+        .get('http://localhost:8000/lecturaanalisisObsolescenciaAutomatico')
+        .then(response => {
+          this.autoAnalisisObsolescencia = response.data
+          console.log('autoAnalisisObsolescencia:', response.data)
+          // ... (puedes agregar lógica adicional aquí, como mostrar un mensaje de éxito) ...
+        })
+        .catch(error => {
+          console.error('Error en lectura la BOM:', error)
+          // ... (manejo de errores, como mostrar un mensaje al usuario) ...
+        })
       this.alternativo = [
         {
           Componente: `C0805C104K5RACTU`,
@@ -347,15 +447,23 @@ export default {
       ]
     },
     datasheet (item) {
-
+      axios
+        .get('http://localhost:8000/abrirDatasheet', {
+          params: {
+            path: item.pathdatasheet
+          }
+        })
+        .then(response => {
+          console.log('datasheet leido', response.data)
+          // ... (puedes agregar lógica adicional aquí, como mostrar un mensaje de éxito) ...
+        })
+        .catch(error => {
+          console.error('Error en lectura datasheet:', error)
+          // ... (manejo de errores, como mostrar un mensaje al usuario) ...
+        })
     },
 
     Resumen (item) {
-      this.dialogResumen = true
-    },
-
-    closeResumen () {
-      this.dialogResumen = false
     }
 
   },
