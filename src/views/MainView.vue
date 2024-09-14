@@ -6,7 +6,7 @@
         <v-list-group v-for="(item, key) in items" :key="key" v-model="item.active" :append-icon="item.appendIcon" @click="itemClick(item, key)">
           <template v-slot:activator>
             <v-list-item-icon>
-              <v-icon v-text="item.icon"></v-icon>
+              <v-icon>{{ item.icon}}</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title v-text="item.title"></v-list-item-title>
@@ -25,27 +25,23 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-app-bar :clipped-left="$vuetify.breakpoint.lgAndUp" app color="primary" dark :dense="denseFlag">
+    <v-app-bar :clipped-left="$vuetify.breakpoint.lgAndUp" app color="#0083BB" dark :dense="denseFlag">
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
       <v-toolbar-title style="width: 300px" class="pl-4 ml-0">
-        <span class="hidden-sm-and-down">Project Manager AI</span>
+        <v-img
+          lazy-src="/img/ProceAIIcon.png"
+          max-height="50"
+          max-width="150"
+          src="/img/ProceAIIcon.png"
+        ></v-img>
       </v-toolbar-title>
-      <v-text-field
-        v-model="searchText"
-        flat
-        solo-inverted
-        hide-details
-        prepend-inner-icon="mdi-magnify"
-        label="Search"
-        class="hidden-sm-and-down"
-        :dense="denseFlag"
-        @keyup.enter="handleSearch"
-      />
+      <v-spacer />
+      <v-toolbar-title>{{ $store.state.nametitle }}</v-toolbar-title>
       <v-spacer />
       <v-menu offset-y>
         <template v-slot:activator="{ on, attrs }">
           <v-btn text v-bind="attrs" v-on="on" small>
-            <v-icon>mdi-translate</v-icon>
+            <v-icon>{{ icons.mdiTranslateVariant }}</v-icon>
             <v-icon small> mdi-chevron-down </v-icon>
           </v-btn>
         </template>
@@ -56,7 +52,25 @@
               <v-list-item-title @click="changeLang('en')">English</v-list-item-title>
             </v-list-item>
             <v-list-item>
+              <v-list-item-title @click="changeLang('es')">Español</v-list-item-title>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-title @click="changeLang('it')">Italino</v-list-item-title>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-title @click="changeLang('de')">Aleman</v-list-item-title>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-title @click="changeLang('fr')">Frances</v-list-item-title>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-title @click="changeLang('pt')">Portugues</v-list-item-title>
+            </v-list-item>
+            <v-list-item>
               <v-list-item-title @click="changeLang('zh')">Chino</v-list-item-title>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-title @click="changeLang('hi')">Hindi</v-list-item-title>
             </v-list-item>
           </v-list-item-group>
         </v-list>
@@ -109,10 +123,10 @@
     </v-main>
     <v-dialog v-model="dialog" width="500">
       <v-card>
-        <v-card-title primary-title>Vue D3 Examples</v-card-title>
+        <v-card-title primary-title>Manager AI</v-card-title>
         <v-card-text>Version: v{{ version }}</v-card-text>
-        <v-card-text>Author: YuanWei Guo</v-card-text>
-        <v-card-text>Email: qingyi_w@outlook.com</v-card-text>
+        <v-card-text>Author: Francisco Prats</v-card-text>
+        <v-card-text>Email: fpratsquilez@gmail.com</v-card-text>
       </v-card>
     </v-dialog>
     <v-fab-transition>
@@ -132,8 +146,34 @@
 
 <script>
 import packageJson from '../../package.json'
+import {
+  mdiFacebook,
+  mdiGoogle,
+  mdiChip,
+  mdiDatabaseCogOutline,
+  mdiWeb,
+  mdiOfficeBuildingCog,
+  mdiTextBoxSearchOutline,
+  mdiAlphaFBoxOutline,
+  mdiCheckCircleOutline,
+  mdiAlphaPBoxOutline,
+  mdiTranslateVariant
+} from '@mdi/js'
 export default {
   data: () => ({
+    icons: {
+      mdiFacebook,
+      mdiGoogle,
+      mdiChip,
+      mdiDatabaseCogOutline,
+      mdiWeb,
+      mdiOfficeBuildingCog,
+      mdiTextBoxSearchOutline,
+      mdiAlphaFBoxOutline,
+      mdiCheckCircleOutline,
+      mdiAlphaPBoxOutline,
+      mdiTranslateVariant
+    },
     snackbar: false,
     version: '',
     fullScreen: false,
@@ -154,59 +194,80 @@ export default {
         {
           icon: 'mdi-alpha-i-box-outline',
           title: this.$vuetify.lang.t('$vuetify.sidebar.titleIntroduction.value'),
-          path: '/examples/introduction',
+          path: '/mainview/introduction',
           appendIcon: null,
           active: true
         },
         {
-          icon: 'mdi-alpha-b-box-outline',
+          icon: this.icons.mdiAlphaPBoxOutline,
           title: this.$vuetify.lang.t('$vuetify.sidebar.title1.value'),
           children: [
-            { title: this.$vuetify.lang.t('$vuetify.sidebar.title1.children.title1.value'), path: '/examples/helloworld' }
+            { title: this.$vuetify.lang.t('$vuetify.sidebar.title1.children.title1.value'), path: '/mainview/resumen' }
           ],
           appendIcon: 'mdi-chevron-down'
         },
         {
-          icon: 'mdi-alpha-b-box-outline',
+          icon: this.icons.mdiChip,
           title: this.$vuetify.lang.t('$vuetify.sidebar.title2.value'),
           children: [
-            { title: this.$vuetify.lang.t('$vuetify.sidebar.title2.children.title1.value'), path: '/examples/HW_Diseno' },
-            { title: this.$vuetify.lang.t('$vuetify.sidebar.title2.children.title2.value'), path: '/examples/GestionBOM' },
-            { title: this.$vuetify.lang.t('$vuetify.sidebar.title2.children.title3.value'), path: '/examples/DescripcionDiseñoHW' }
+            { title: this.$vuetify.lang.t('$vuetify.sidebar.title2.children.title1.value'), path: '/mainview/HW_Diseno' },
+            { title: this.$vuetify.lang.t('$vuetify.sidebar.title2.children.title2.value'), path: '/mainview/GestionBOM' },
+            { title: this.$vuetify.lang.t('$vuetify.sidebar.title2.children.title3.value'), path: '/mainview/DescripcionDiseñoHW' }
           ],
           appendIcon: 'mdi-chevron-down'
         },
         {
-          icon: 'mdi-alpha-b-box-outline',
+          icon: this.icons.mdiCheckCircleOutline,
           title: this.$vuetify.lang.t('$vuetify.sidebar.title3.value'),
           children: [
-            { title: this.$vuetify.lang.t('$vuetify.sidebar.title3.children.title1.value'), path: '/examples/Testing_IA' }
+            { title: this.$vuetify.lang.t('$vuetify.sidebar.title3.children.title1.value'), path: '/mainview/Testing_IA' },
+            { title: this.$vuetify.lang.t('$vuetify.sidebar.title3.children.title2.value'), path: '/mainview/AutomatizacionTest' },
+            { title: this.$vuetify.lang.t('$vuetify.sidebar.title3.children.title3.value'), path: '/mainview/Check_Tests_IA' }
           ],
           appendIcon: 'mdi-chevron-down'
         },
         {
-          icon: 'mdi-alpha-b-box-outline',
+          icon: this.icons.mdiAlphaFBoxOutline,
           title: this.$vuetify.lang.t('$vuetify.sidebar.title4.value'),
           children: [
-            { title: this.$vuetify.lang.t('$vuetify.sidebar.title4.children.title1.value'), path: '/examples/FW_IA' }
+            { title: this.$vuetify.lang.t('$vuetify.sidebar.title4.children.title1.value'), path: '/mainview/FW_IA' },
+            { title: this.$vuetify.lang.t('$vuetify.sidebar.title4.children.title2.value'), path: '/mainview/STM32_DL_IA' }
           ],
           appendIcon: 'mdi-chevron-down'
         },
         {
-          icon: 'mdi-alpha-b-box-outline',
+          icon: this.icons.mdiTextBoxSearchOutline,
           title: this.$vuetify.lang.t('$vuetify.sidebar.title5.value'),
           children: [
-            { title: this.$vuetify.lang.t('$vuetify.sidebar.title5.children.title1.value'), path: '/examples/GestionDocumental' }
+            { title: this.$vuetify.lang.t('$vuetify.sidebar.title5.children.title1.value'), path: '/mainview/GestionDocumental' }
           ],
           appendIcon: 'mdi-chevron-down'
         },
         {
-          icon: 'mdi-alpha-b-box-outline',
+          icon: this.icons.mdiOfficeBuildingCog,
           title: this.$vuetify.lang.t('$vuetify.sidebar.title6.value'),
           children: [
-            { title: this.$vuetify.lang.t('$vuetify.sidebar.title6.children.title1.value'), path: '/examples/GestionCompañia' },
-            { title: this.$vuetify.lang.t('$vuetify.sidebar.title6.children.title2.value'), path: '/examples/GestionPersonal' },
-            { title: this.$vuetify.lang.t('$vuetify.sidebar.title6.children.title3.value'), path: '/examples/GestionIncidencias' }
+            { title: this.$vuetify.lang.t('$vuetify.sidebar.title6.children.title1.value'), path: '/mainview/GestionCompañia' },
+            { title: this.$vuetify.lang.t('$vuetify.sidebar.title6.children.title2.value'), path: '/mainview/GestionPersonal' },
+            { title: this.$vuetify.lang.t('$vuetify.sidebar.title6.children.title3.value'), path: '/mainview/GestionIncidencias' },
+            { title: this.$vuetify.lang.t('$vuetify.sidebar.title6.children.title4.value'), path: '/mainview/ChatBotWhastsapp' },
+            { title: this.$vuetify.lang.t('$vuetify.sidebar.title6.children.title5.value'), path: '/mainview/IncidenciasLlamadas' }
+          ],
+          appendIcon: 'mdi-chevron-down'
+        },
+        {
+          icon: this.icons.mdiDatabaseCogOutline,
+          title: this.$vuetify.lang.t('$vuetify.sidebar.title7.value'),
+          children: [
+            { title: this.$vuetify.lang.t('$vuetify.sidebar.title7.children.title1.value'), path: '/mainview/ConsulTaBBDDNoSQL' }
+          ],
+          appendIcon: 'mdi-chevron-down'
+        },
+        {
+          icon: this.icons.mdiWeb,
+          title: this.$vuetify.lang.t('$vuetify.sidebar.title8.value'),
+          children: [
+            { title: this.$vuetify.lang.t('$vuetify.sidebar.title8.children.title1.value'), path: '/mainview/AWS' }
           ],
           appendIcon: 'mdi-chevron-down'
         }
@@ -219,9 +280,9 @@ export default {
       this.$vuetify.theme.dark = true
       this.dark = true
     }
-    if (this.$route.path === '/examples') {
+    if (this.$route.path === '/mainview') {
       // default route path
-      this.$router.push('/examples/introduction').catch(err => { }) // eslint-disable-line
+      this.$router.push('/mainview/introduction').catch(err => { }) // eslint-disable-line
     } else {
       this.$router.push(this.$route.path).catch(err => { }) // eslint-disable-line
       const path = this.$route.path
@@ -380,6 +441,7 @@ export default {
     },
     subItemClick (item, key) {
       sessionStorage.setItem('subItemActive', key)
+      this.$store.state.nametitle = item.title
       this.$router.push(item.path).catch(err => { }) // eslint-disable-line
     },
     goHome () {

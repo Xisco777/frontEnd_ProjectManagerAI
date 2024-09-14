@@ -1,8 +1,5 @@
 <template>
   <div>
-    <p class="font-weight-black text-center">
-      GESTIÓN BOM
-    </p>
     <v-row
       align="center"
       justify="space-around"

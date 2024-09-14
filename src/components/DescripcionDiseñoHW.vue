@@ -1,8 +1,5 @@
 <template>
   <div>
-    <p class="font-weight-black text-center">
-      Generacion Documento Descripcion de Diseño HW
-    </p>
     <v-select
       :items="BOMs"
       label="BOM"

@@ -1,8 +1,5 @@
 <template>
   <div>
-    <p class="font-weight-black text-center">
-      GESTIÓN DOCUMENTAL
-    </p>
     <v-file-input
     v-model="files"
     label="Ruta de archivos a cargar"

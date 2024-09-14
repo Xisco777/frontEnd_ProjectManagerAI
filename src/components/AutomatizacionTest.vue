@@ -1,240 +1,81 @@
 <template>
   <div max-width="1500px">
-    <v-row
-      align="center"
-      justify="space-around"
-    >
-        <v-btn color="primary" @click="dialocrearworkspace = true">
-          CREAR WORKSPACE
-        </v-btn>
-        <v-btn color="primary" @click="dialogCargarWorkspace = true">
-          CARGAR WORKSPACE
-        </v-btn>
-    </v-row>
-    <v-divider
-      inset
-      vertical
-    ></v-divider>
-    <v-dialog v-model="dialocrearworkspace" max-width="1100px">
-      <v-card>
-        <v-card-title>
-          <span class="text-h5">CREAR WORKSPACE</span>
-        </v-card-title>
-
-        <v-card-text>
-          <v-container>
-            <v-row>
-              <v-col cols="12">
+    <v-card-text>
+              <v-form @submit.prevent="enviarConsulta">
                 <v-text-field
-                  v-model="archivosPath"
-                  label="Path"
+                  v-model="procedmientotest"
+                  label="Procedimiento Test"
+                  required
                 ></v-text-field>
-              </v-col>
-              <v-col cols="12">
                 <v-text-field
-                  v-model="workspacename"
-                  label="Nombre del Workspace"
+                  v-model="nombreBBDD"
+                  label="Descripcion de diseño HW (Opcional)"
+                  required
                 ></v-text-field>
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="dialocrearworkspace= false">SALIR</v-btn>
-          <v-btn color="blue darken-1" text @click="guardarworkspace">GUARDAR</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+                <v-text-field
+                  v-model="api_open_ai_key"
+                  label="Especificaciones del producto (Opcional)"
+                  required
+                ></v-text-field>
+                <v-text-field
+                  v-model="pythonFilePath"
+                  label="Descripcion SW del Producto (Opcional)"
+                  required
+                ></v-text-field>
 
-    <v-dialog v-model="dialogCargarWorkspace" max-width="1200px">
-      <v-card>
-        <v-card-title>
-          <span class="text-h5">CARGAR WORKSPACE</span>
-        </v-card-title>
-        <v-select
-          v-model="selectworkspace"
-          :items="workspaces"
-          label="Standard"
-          dense
-        ></v-select>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="dialogCargarWorkspace = false">Salir</v-btn>
-          <v-btn color="blue darken-1" text @click="cargarworkspace">Cargar</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-    <v-card>
-      <v-data-table
-    :headers="headers"
-    :items="archivos"
-    sort-by="calories"
-    class="elevation-1"
-  >
-    <template v-slot:top>
-      <v-toolbar
-        flat
-      >
-        <v-toolbar-title>{{workspacename}}</v-toolbar-title>
-        <v-divider
-          class="mx-4"
-          inset
-          vertical
-        ></v-divider>
-        <v-spacer></v-spacer>
-        <v-dialog
-          v-model="dialog"
-          max-width="800px"
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              color="primary"
-              dark
-              class="mb-2"
-              v-bind="attrs"
-              v-on="on"
-            >
-              Añadir documento
-            </v-btn>
-          </template>
-          <v-card>
-            <v-card-title>
-              <span class="text-h5"> Nuevo Documento </span>
-            </v-card-title>
+                <v-text-field
+                  v-model="dbDescriptionPath"
+                  label="Documentacion Adicional (opcional)"
+                ></v-text-field>
 
-            <v-card-text>
-              <v-container>
-                <v-row>
-                  <v-col
-                    cols="12"
-                  >
-                    <v-text-field
-                      v-model="rutanuevodocumento"
-                      label="Ruta Documento"
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
-              </v-container>
+                <v-textarea
+                  v-model="consulta"
+                  label="Añadir contenido extra"
+                  rows="3"
+                  required
+                ></v-textarea>
+                <v-simple-table>
+                  <template v-slot:default>
+                    <thead>
+                      <tr>
+                        <th class="text-left">
+                          Nombre Instrumento
+                        </th>
+                        <th class="text-left">
+                          Tipo
+                        </th>
+                        <th class="text-left">
+                          Clase .py
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        v-for="item in desserts"
+                        :key="item.name"
+                      >
+                        <td>{{ item.name }}</td>
+                        <td>{{ item.tipo }}</td>
+                        <td>{{ item.clase }}</td>
+                      </tr>
+                    </tbody>
+                  </template>
+                </v-simple-table>
+                <v-row align="center" justify="space-around">
+                  <v-btn type="submit" color="primary" class="mt-4">
+                  AÑADIR INSTRUMENTO
+                </v-btn>
+                <v-btn type="submit" color="primary" class="mt-4">
+                  GENERAR CLASE .PY DEL INSTRUMENTO
+                </v-btn>
+              </v-row>
+              <v-row align="center" justify="space-around">
+                <v-btn type="submit" color="primary" class="mt-4">
+                  CREAR SECUENCIA TEST
+                </v-btn>
+              </v-row>
+              </v-form>
             </v-card-text>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn
-                color="blue darken-1"
-                text
-                @click="close"
-              >
-                Cancelar
-              </v-btn>
-              <v-btn
-                color="blue darken-1"
-                text
-                @click="save"
-              >
-                Guardar
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-        <v-dialog v-model="dialogDelete" max-width="500px">
-          <v-card>
-            <v-card-title class="text-h5">Desea Eliminar?</v-card-title>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="closeDelete">Cancel</v-btn>
-              <v-btn color="blue darken-1" text @click="deleteItemConfirm">OK</v-btn>
-              <v-spacer></v-spacer>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-      </v-toolbar>
-    </template>
-    <template v-slot:item.actions="{ item }">
-      <v-icon
-        small
-        @click="deleteItem(item)"
-      >
-        mdi-delete
-      </v-icon>
-    </template>
-  </v-data-table>
-  <v-spacer></v-spacer>
-      <v-row
-        align="center"
-        justify="space-around"
-      >
-      <v-btn
-            color="primary"
-            flat
-            @click=recargarLista()
-          >
-            RECARGAR LISTA
-          </v-btn>
-          <v-btn
-            color="primary"
-            flat
-            @click=checkearDocumentacionDuplicada()
-          >
-            CHECKEAR DOCUMENTACION DUPLICADA
-          </v-btn>
-          <v-checkbox
-        v-model="WorkspaceAutomatica"
-        color="secondary"
-        label="RECARGA AUTOMATICA (CADA 10 MINUTOS)"
-        @click="cambioWorkspaceAutomatica"
-      ></v-checkbox>
-      </v-row>
-        <div>
-      <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-container fluid>
-          <v-textarea
-            v-model="consultamensaje"
-            autocomplete="email"
-            label="Introduce pregunta para buscar en la documentacion"
-          ></v-textarea>
-        </v-container>
-      </v-card-actions>
-      <v-spacer></v-spacer>
-          <v-col class="text-center" cols="12">
-          <v-btn
-            color="primary"
-            flat
-            @click=consulta()
-          >
-            CONSULTAR
-          </v-btn>
-        </v-col>
-      </div>
-    </v-card>
-    <v-dialog v-model="dialogresupuestaduplicidad" max-width="1200px">
-      <v-card>
-        <v-card-title>
-          <span class="text-h5">Respuesta Archivo Dupicados</span>
-        </v-card-title>
-          <v-textarea
-            v-model="respuestaduplicidad"
-          ></v-textarea>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="dialogresupuestaduplicidad = false">Salir</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-    <v-dialog v-model="dialogconsulta" max-width="1200px">
-      <v-card>
-        <v-card-title>
-          <span class="text-h5">Respuesta Consulta</span>
-        </v-card-title>
-          <v-textarea
-            v-model="respuestaconsulta"
-          ></v-textarea>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="dialogconsulta = false">Salir</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
   </div>
 </template>
 <script>
@@ -242,9 +83,28 @@ import axios from 'axios'
 export default {
   data () {
     return {
-      rutanuevodocumento: '',
-      workspacename: '',
-      archivosPath: '',
+      desserts: [
+        {
+          name: 'Multimetro IDM834',
+          tipo: 'Multimetro',
+          clase: 'IDM834.py'
+        },
+        {
+          name: 'PiscoScope 2204A',
+          tipo: 'Osciloscopio',
+          clase: 'ps2000.py'
+        },
+        {
+          name: 'PiscoScope 2204A Funciones',
+          tipo: 'Funciones Osciloscopio',
+          clase: 'functions.py'
+        },
+        {
+          name: 'TTi EL302P',
+          tipo: 'Fuente de Tension',
+          clase: 'EL302P.py'
+        }
+      ],
       WorkspaceAutomatica: false,
       dialogCargarWorkspace: false,
       dialocrearworkspace: false,
@@ -263,14 +123,13 @@ export default {
           text: 'Nombre Documento',
           align: 'start',
           sortable: false,
-          value: 'NombreDocumento'
+          value: 'name'
         },
-        { text: 'Tipo Documento', value: 'TipoDocumento' },
-        { text: 'Fecha Modificación', value: 'FechaModificacion' },
-        { text: 'Ruta', value: 'Ruta' },
+        { text: 'Tipo Documento', value: 'tipo' },
+        { text: 'Fecha Modificación', value: 'fecha' },
+        { text: 'Ruta', value: 'ruta' },
         { text: 'Acciones', value: 'actions', sortable: false }
       ],
-      desserts: [],
       editedIndex: -1,
       editedItem: {
         name: '',
@@ -286,18 +145,16 @@ export default {
       },
       archivos: [
         {
-          FechaModificacion: '2023-08-15 07:51:19',
-          NombreDocumento: 'ProjectManagerIA.docx',
-          Ruta: 'ProjectManagerIA.docx',
-          TipoDocumento: '.docx',
-          nombreWorkspace: '.docx'
+          name: 'ProjectManagerIA.docx',
+          tipo: '.docx',
+          fechamodificacion: '2023-08-15 07:51:19',
+          path: 'ProjectManagerIA.docx'
         },
         {
-          FechaModificacion: '2023-08-15 07:51:19',
-          NombreDocumento: 'ProjectManagerIA.docx',
-          Ruta: 'ProjectManagerIA.docx',
-          TipoDocumento: '.docx',
-          nombreWorkspace: '.docx'
+          name: '222.docx',
+          tipo: '.docx',
+          fechamodificacion: '2023-08-15 07:51:19',
+          path: '222.docx'
         }
       ]
     }
@@ -342,8 +199,8 @@ export default {
         axios
           .get('http://localhost:8000/generarWorkspace', {
             params: {
-              nombreWorkspace: this.workspacename,
-              pathWorkspace: this.archivosPath
+              path: this.archivosPath,
+              nombreProyecto: this.workspacename
             }
           })
           .then(response => {
@@ -358,15 +215,13 @@ export default {
         console.error('Por favor, completa ambos campos (ruta y nombre del proyecto).')
       }
     },
-    cargarworkspace() {
-      this.dialogCargarWorkspace = false
+    cargarWorkspace() {
       this.mostrarworkspace = true
-      this.workspacename = this.selectworkspace
-      if (this.selectworkspace) {
+      if (this.selectBOM) {
         axios
           .get('http://localhost:8000/recargarListaWorkspace', {
             params: {
-              nombreWorkspace: this.selectworkspace
+              nombre_workspace: this.selectworkspace
             }
           })
           .then(response => {
@@ -406,12 +261,12 @@ export default {
       axios
         .get('http://localhost:8000/consultaWorkspace', {
           params: {
-            nombreWorkspace: this.selectworkspace,
+            nombre_workspace: this.selectworkspace,
             consulta: this.consultamensaje
           }
         })
         .then(response => {
-          this.respuestaconsulta = response.data.message
+          this.respuestaconsulta = response.data
           console.log('Workspace leida:', response.data)
           // ... (puedes agregar lógica adicional aquí, como mostrar un mensaje de éxito) ...
           this.dialogconsulta = true // Cierra el diálogo después de guardar
@@ -425,11 +280,11 @@ export default {
       axios
         .get('http://localhost:8000/checkearduplicidadWorkspace', {
           params: {
-            nombreWorkspace: this.selectworkspace
+            nombre_workspace: this.selectworkspace
           }
         })
         .then(response => {
-          this.respuestaduplicidad = response.data.message
+          this.respuestaduplicidad = response.data
           this.dialogresupuestaduplicidad = true
           console.log('BOM leida:', response.data)
           // ... (puedes agregar lógica adicional aquí, como mostrar un mensaje de éxito) ...
@@ -462,13 +317,26 @@ export default {
           console.error('Error en lectura de worskpace:', error)
           // ... (manejo de errores, como mostrar un mensaje al usuario) ...
         })
-      this.archivos = [
+      this.desserts = [
         {
-          FechaModificacion: '',
-          NombreDocumento: '',
-          Ruta: '',
-          TipoDocumento: '',
-          nombreWorkspace: ''
+          name: 'Multimetro IDM834',
+          tipo: 'Multimetro',
+          clase: 'IDM834.py'
+        },
+        {
+          name: 'PiscoScope 2204A',
+          tipo: 'Osciloscopio',
+          clase: 'ps2000.py'
+        },
+        {
+          name: 'PiscoScope 2204A Funciones',
+          tipo: 'Funciones Osciloscopio',
+          clase: 'functions.py'
+        },
+        {
+          name: 'TTi EL302P',
+          tipo: 'Fuente de Tension',
+          clase: 'EL302P.py'
         }
       ]
     },
@@ -519,7 +387,7 @@ export default {
     save () {
       axios
         .post('http://localhost:8000/añadirDocumentoWorkspace', {
-          path: this.rutanuevodocumento,
+          path: this.WorkspaceAutomatica,
           nameworkspace: this.selectworkspace
         }, {
           headers: {

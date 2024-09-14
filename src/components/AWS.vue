@@ -2,60 +2,45 @@
   <div>
     <v-container fluid>
       <v-row justify="center">
-        <v-col cols="12" md="8">
+        <v-col cols="12">
           <v-card class="pa-4">
             <v-card-text>
               <v-form @submit.prevent="enviarConsulta">
-                <v-text-field
-                  v-model="nombreBBDD"
-                  label="Documento Descripcion de Diseño HW"
+                <v-row align="center" justify="space-around">
+                  <v-textarea
+                  class="pa-4"
+                  background-color="grey lighten-2"
+                  v-model="consulta"
+                  label="Descripción del proceso"
+                  rows="20"
                   required
-                ></v-text-field>
-                <v-text-field
-                  v-model="api_open_ai_key"
-                  label="Normativa Aplicable (Optional)"
+                  no-resize
+                ></v-textarea>
+                  <v-textarea
+                  class="pa-4"
+                  background-color="grey lighten-2"
+                  v-model="consulta"
+                  label="Codigo a Ejecutar"
+                  rows="20"
                   required
-                ></v-text-field>
-                <v-text-field
-                  v-model="api_open_ai_key"
-                  label="Especificaciones del sistema (Optional)"
-                  required
-                ></v-text-field>
-                <v-text-field
-                  v-model="api_open_ai_key"
-                  label="Documentacion Adicional (Optional)"
-                  required
-                ></v-text-field>
-                <v-text-field
-                  v-model="api_open_ai_key"
-                  label="Template documento Salida (Optional)"
-                  required
-                ></v-text-field>
+                  no-resize
+                ></v-textarea>
+                </v-row>
                 <v-textarea
                   v-model="consulta"
-                  label="Añadir consideraciones a tener en cuenta (Optional)"
-                  rows="3"
+                  label="Descripcion en Lenguaje Natural del Servicio AWS que se desea"
+                  rows="5"
                   required
+                  no-resize
                 ></v-textarea>
-                <v-text-field
-                  v-model="pythonFilePath"
-                  label="Ruta salida documento"
-                  required
-                ></v-text-field>
+
                 <v-row align="center" justify="space-around">
                   <v-btn type="submit" color="primary" class="mt-4">
-                  GENERAR DOCUMENTO DE PROCEDIMINETO DE TEST FUNCIONALES
-                </v-btn>
-                </v-row>
-                <v-row align="center" justify="space-around">
+                  CONSULTAR/MODIFICACION
+                  </v-btn>
                   <v-btn type="submit" color="primary" class="mt-4">
-                  GENERAR DOCUMENTO DE PROCEDIMINETO DE TEST CALIFICACION
-                </v-btn>
-                </v-row>
-                <v-row align="center" justify="space-around">
-                  <v-btn type="submit" color="primary" class="mt-4">
-                  GENERAR DOCUMENTO DE PROCEDIMINETO DE TEST PRODUCCION
-                </v-btn>
+                  EJECUTAR
+                  </v-btn>
                 </v-row>
               </v-form>
             </v-card-text>

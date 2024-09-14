@@ -7,56 +7,41 @@
             <v-card-text>
               <v-form @submit.prevent="enviarConsulta">
                 <v-text-field
+                  v-model="connectionString"
+                  label="String de Conexión"
+                  required
+                ></v-text-field>
+                <v-text-field
                   v-model="nombreBBDD"
-                  label="Documento Descripcion de Diseño HW"
+                  label="Nombre de la BBDD"
                   required
                 ></v-text-field>
                 <v-text-field
                   v-model="api_open_ai_key"
-                  label="Normativa Aplicable (Optional)"
+                  label="API key OpenAI"
                   required
                 ></v-text-field>
                 <v-text-field
-                  v-model="api_open_ai_key"
-                  label="Especificaciones del sistema (Optional)"
+                  v-model="pythonFilePath"
+                  label="Ruta del Archivo Python"
                   required
                 ></v-text-field>
+
                 <v-text-field
-                  v-model="api_open_ai_key"
-                  label="Documentacion Adicional (Optional)"
-                  required
+                  v-model="dbDescriptionPath"
+                  label="Ruta del Archivo de Descripción (opcional)"
                 ></v-text-field>
-                <v-text-field
-                  v-model="api_open_ai_key"
-                  label="Template documento Salida (Optional)"
-                  required
-                ></v-text-field>
+
                 <v-textarea
                   v-model="consulta"
-                  label="Añadir consideraciones a tener en cuenta (Optional)"
+                  label="Consulta en Lenguaje Natural"
                   rows="3"
                   required
                 ></v-textarea>
-                <v-text-field
-                  v-model="pythonFilePath"
-                  label="Ruta salida documento"
-                  required
-                ></v-text-field>
-                <v-row align="center" justify="space-around">
-                  <v-btn type="submit" color="primary" class="mt-4">
-                  GENERAR DOCUMENTO DE PROCEDIMINETO DE TEST FUNCIONALES
+
+                <v-btn type="submit" color="primary" class="mt-4">
+                  CONSULTAR
                 </v-btn>
-                </v-row>
-                <v-row align="center" justify="space-around">
-                  <v-btn type="submit" color="primary" class="mt-4">
-                  GENERAR DOCUMENTO DE PROCEDIMINETO DE TEST CALIFICACION
-                </v-btn>
-                </v-row>
-                <v-row align="center" justify="space-around">
-                  <v-btn type="submit" color="primary" class="mt-4">
-                  GENERAR DOCUMENTO DE PROCEDIMINETO DE TEST PRODUCCION
-                </v-btn>
-                </v-row>
               </v-form>
             </v-card-text>
           </v-card>
@@ -85,18 +70,24 @@ export default {
   },
   methods: {
     cargarConfiguracion() {
+      // Este método se utiliza para cargar la configuración inicial del componente
+      // Hace una petición GET a un servidor local en el puerto 8000
       axios
         .get('http://localhost:8000/get_datosConsultaBBDD')
         .then(response => {
+          // Si la petición es exitosa, actualiza las propiedades del componente
+          // con los datos recibidos del servidor
           this.connectionString = response.data.connectionString
           this.pythonFilePath = response.data.pythonFilePath
           this.api_open_ai_key = response.data.api_open_ai_key
-          console.log('workspaces leidas:', response.data)
-          // ... (puedes agregar lógica adicional aquí, como mostrar un mensaje de éxito) ...
+          // Imprime en la consola los datos recibidos
+          console.log('workspaces leídos:', response.data)
+          // Aquí se podría agregar más lógica, como mostrar un mensaje de éxito
         })
         .catch(error => {
-          console.error('Error en lectura de worskpace:', error)
-          // ... (manejo de errores, como mostrar un mensaje al usuario) ...
+          // Si ocurre un error durante la petición, lo imprime en la consola
+          console.error('Error en lectura de workspace:', error)
+          // Aquí se podría agregar lógica para manejar el error, como mostrar un mensaje al usuario
         })
     },
     enviarConsulta() {

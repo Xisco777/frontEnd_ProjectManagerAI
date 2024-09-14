@@ -1,8 +1,5 @@
 <template>
   <div>
-    <p class="font-weight-black text-center">
-      GESTIÓN INCIDENCIAS CONSULTAS
-    </p>
     <v-row
       align="center"
       justify="space-around"
@@ -25,7 +22,7 @@
       justify="space-around"
     >
         <v-btn color="primary" @click="dialogtipoIncidencia=true">
-          COMFIGURAR TIPO INCIDENCIA
+          CONFIGURAR TIPO INCIDENCIA
         </v-btn>
         <v-btn color="primary" @click="dialogpersonal=true">
           PERSONAL
@@ -254,9 +251,10 @@ export default {
         })
     },
     guadarproductos() {
+      this.dialogproductos = false
       axios
         .post('http://localhost:8000/set_configurarProductos', {
-          email: this.productos
+          productos: this.productos
         }, {
           headers: {
             'Content-Type': 'application/json'
@@ -268,9 +266,10 @@ export default {
         })
     },
     guadarpersonal() {
+      this.dialogpersonal = false
       axios
         .post('http://localhost:8000/set_configuraPersonal', {
-          email: this.personal
+          personal: this.personal
         }, {
           headers: {
             'Content-Type': 'application/json'
@@ -282,9 +281,10 @@ export default {
         })
     },
     guadartipoincidencia() {
+      this.dialogtipoIncidencia = false
       axios
         .post('http://localhost:8000/set_configurarTipoIncidencia', {
-          email: this.email
+          tipoIncidencia: this.tipoIncidencia
         }, {
           headers: {
             'Content-Type': 'application/json'
@@ -296,9 +296,10 @@ export default {
         })
     },
     guadarempresa() {
+      this.dialogdescripcionEmpresa = false
       axios
         .post('http://localhost:8000/set_descripcionEmpresa', {
-          email: this.descripcionEmpresa
+          descripcionEmpresa: this.descripcionEmpresa
         }, {
           headers: {
             'Content-Type': 'application/json'
@@ -346,7 +347,7 @@ export default {
       axios
         .get('http://localhost:8000/get_configurarTipoIncidencia')
         .then(response => {
-          this.email = response.data
+          this.tipoIncidencia = response.data
           console.log('BOM leida:', response.data)
           // ... (puedes agregar lógica adicional aquí, como mostrar un mensaje de éxito) ...
         })
@@ -357,7 +358,7 @@ export default {
       axios
         .get('http://localhost:8000/get_configuraPersonal')
         .then(response => {
-          this.email = response.data
+          this.personal = response.data
           console.log('BOM leida:', response.data)
           // ... (puedes agregar lógica adicional aquí, como mostrar un mensaje de éxito) ...
         })
@@ -368,7 +369,7 @@ export default {
       axios
         .get('http://localhost:8000/get_descripcionEmpresa')
         .then(response => {
-          this.email = response.data
+          this.descripcionEmpresa = response.data
           console.log('BOM leida:', response.data)
           // ... (puedes agregar lógica adicional aquí, como mostrar un mensaje de éxito) ...
         })
@@ -379,7 +380,7 @@ export default {
       axios
         .get('http://localhost:8000/get_configurarProductos')
         .then(response => {
-          this.email = response.data
+          this.productos = response.data
           console.log('BOM leida:', response.data)
           // ... (puedes agregar lógica adicional aquí, como mostrar un mensaje de éxito) ...
         })

@@ -2,60 +2,66 @@
   <div>
     <v-container fluid>
       <v-row justify="center">
-        <v-col cols="12" md="8">
+        <v-col cols="12">
           <v-card class="pa-4">
             <v-card-text>
               <v-form @submit.prevent="enviarConsulta">
-                <v-text-field
-                  v-model="nombreBBDD"
-                  label="Documento Descripcion de Diseño HW"
+                <v-row align="center" justify="space-around">
+                  <v-textarea
+                  class="pa-4"
+                  background-color="grey lighten-2"
+                  v-model="proceso"
+                  :label="this.$vuetify.lang.t('$vuetify.stm32_dl_ia.mensaProcedo')"
+                  rows="20"
                   required
-                ></v-text-field>
-                <v-text-field
-                  v-model="api_open_ai_key"
-                  label="Normativa Aplicable (Optional)"
+                  no-resize
+                ></v-textarea>
+                  <v-textarea
+                  class="pa-4"
+                  background-color="grey lighten-2"
+                  v-model="codigo"
+                  :label="this.$vuetify.lang.t('$vuetify.stm32_dl_ia.mensajeCodigo')"
+                  rows="20"
                   required
-                ></v-text-field>
-                <v-text-field
-                  v-model="api_open_ai_key"
-                  label="Especificaciones del sistema (Optional)"
-                  required
-                ></v-text-field>
-                <v-text-field
-                  v-model="api_open_ai_key"
-                  label="Documentacion Adicional (Optional)"
-                  required
-                ></v-text-field>
-                <v-text-field
-                  v-model="api_open_ai_key"
-                  label="Template documento Salida (Optional)"
-                  required
-                ></v-text-field>
+                  no-resize
+                ></v-textarea>
+                </v-row>
                 <v-textarea
                   v-model="consulta"
-                  label="Añadir consideraciones a tener en cuenta (Optional)"
-                  rows="3"
+                  :label="this.$vuetify.lang.t('$vuetify.stm32_dl_ia.mensajePrompt')"
+                  rows="5"
                   required
+                  no-resize
                 ></v-textarea>
-                <v-text-field
-                  v-model="pythonFilePath"
-                  label="Ruta salida documento"
-                  required
-                ></v-text-field>
+                <v-file-input
+                  v-model="rutatscript"
+                  :label="this.$vuetify.lang.t('$vuetify.stm32_dl_ia.mensajeRuta')"
+                  placeholder="Archivo"
+                  prepend-icon="mdi-paperclip"
+                  multiple
+                >
+                </v-file-input>
                 <v-row align="center" justify="space-around">
                   <v-btn type="submit" color="primary" class="mt-4">
-                  GENERAR DOCUMENTO DE PROCEDIMINETO DE TEST FUNCIONALES
-                </v-btn>
+                    {{ this.$vuetify.lang.t('$vuetify.stm32_dl_ia.consulta_modificacion') }}
+                  </v-btn>
+                  <v-btn type="submit" color="primary" class="mt-4">
+                    {{ this.$vuetify.lang.t('$vuetify.stm32_dl_ia.entrenar') }}
+                  </v-btn>
+                  <v-btn type="submit" color="primary" class="mt-4">
+                    {{ this.$vuetify.lang.t('$vuetify.stm32_dl_ia.aceptarModelo') }}
+                  </v-btn>
                 </v-row>
                 <v-row align="center" justify="space-around">
                   <v-btn type="submit" color="primary" class="mt-4">
-                  GENERAR DOCUMENTO DE PROCEDIMINETO DE TEST CALIFICACION
-                </v-btn>
-                </v-row>
-                <v-row align="center" justify="space-around">
+                    {{ this.$vuetify.lang.t('$vuetify.stm32_dl_ia.compilarC') }}
+                  </v-btn>
                   <v-btn type="submit" color="primary" class="mt-4">
-                  GENERAR DOCUMENTO DE PROCEDIMINETO DE TEST PRODUCCION
-                </v-btn>
+                    {{ this.$vuetify.lang.t('$vuetify.stm32_dl_ia.generarPrograma') }}
+                  </v-btn>
+                  <v-btn type="submit" color="primary" class="mt-4">
+                    {{ this.$vuetify.lang.t('$vuetify.stm32_dl_ia.compilarFlasheo') }}
+                  </v-btn>
                 </v-row>
               </v-form>
             </v-card-text>
@@ -77,7 +83,9 @@ export default {
       dbDescriptionPath: '',
       consulta: '',
       nombreBBDD: '',
-      api_open_ai_key: ''
+      api_open_ai_key: '',
+      proceso: '',
+      codigo: ''
     }
   },
   created () {

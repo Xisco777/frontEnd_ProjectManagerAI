@@ -7,56 +7,41 @@
             <v-card-text>
               <v-form @submit.prevent="enviarConsulta">
                 <v-text-field
+                  v-model="connectionString"
+                  label="String de Conexión"
+                  required
+                ></v-text-field>
+                <v-text-field
                   v-model="nombreBBDD"
-                  label="Documento Descripcion de Diseño HW"
+                  label="Nombre de la BBDD"
                   required
                 ></v-text-field>
                 <v-text-field
                   v-model="api_open_ai_key"
-                  label="Normativa Aplicable (Optional)"
+                  label="API key OpenAI"
                   required
                 ></v-text-field>
                 <v-text-field
-                  v-model="api_open_ai_key"
-                  label="Especificaciones del sistema (Optional)"
+                  v-model="pythonFilePath"
+                  label="Ruta del Archivo Python"
                   required
                 ></v-text-field>
+
                 <v-text-field
-                  v-model="api_open_ai_key"
-                  label="Documentacion Adicional (Optional)"
-                  required
+                  v-model="dbDescriptionPath"
+                  label="Ruta del Archivo de Descripción (opcional)"
                 ></v-text-field>
-                <v-text-field
-                  v-model="api_open_ai_key"
-                  label="Template documento Salida (Optional)"
-                  required
-                ></v-text-field>
+
                 <v-textarea
                   v-model="consulta"
-                  label="Añadir consideraciones a tener en cuenta (Optional)"
+                  label="Consulta en Lenguaje Natural"
                   rows="3"
                   required
                 ></v-textarea>
-                <v-text-field
-                  v-model="pythonFilePath"
-                  label="Ruta salida documento"
-                  required
-                ></v-text-field>
-                <v-row align="center" justify="space-around">
-                  <v-btn type="submit" color="primary" class="mt-4">
-                  GENERAR DOCUMENTO DE PROCEDIMINETO DE TEST FUNCIONALES
+
+                <v-btn type="submit" color="primary" class="mt-4">
+                  CONSULTAR
                 </v-btn>
-                </v-row>
-                <v-row align="center" justify="space-around">
-                  <v-btn type="submit" color="primary" class="mt-4">
-                  GENERAR DOCUMENTO DE PROCEDIMINETO DE TEST CALIFICACION
-                </v-btn>
-                </v-row>
-                <v-row align="center" justify="space-around">
-                  <v-btn type="submit" color="primary" class="mt-4">
-                  GENERAR DOCUMENTO DE PROCEDIMINETO DE TEST PRODUCCION
-                </v-btn>
-                </v-row>
               </v-form>
             </v-card-text>
           </v-card>
